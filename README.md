@@ -19,7 +19,7 @@ Pull down latest version with docker:
 docker pull stilliard/pure-ftpd
 ```
 
-**Often needing to run as `sudo`, e.g. `sudo docker pull stilliard/pure-ftpd`**
+**If you get a permissions error, you may need to add your user to the docker group, or run with `sudo`**
 
 ----------------------------------------
 
