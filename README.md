@@ -145,6 +145,8 @@ Want a transfer log file? add the following to your `docker run` command:
 Tags available for different versions
 --------------------------------------
 
+Tags are named after [Debian releases](https://www.debian.org/releases/).
+
 - `latest` - latest version, currently Debian Trixie
 - `trixie-latest` - latest pure-ftpd on Debian Trixie (current stable)
 - `bookworm-latest` - latest pure-ftpd on Debian Bookworm
