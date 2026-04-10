@@ -1,23 +1,22 @@
-#Stage 1 : builder debian image
-FROM debian:buster as builder
+ARG DEBIAN_VERSION=trixie
 
-# properly setup debian sources (buster is EOL, packages moved to archive)
-ENV DEBIAN_FRONTEND noninteractive
-RUN echo 'Acquire::Check-Valid-Until "false";' > /etc/apt/apt.conf.d/10archive
-RUN echo "deb http://archive.debian.org/debian buster main\n\
-deb-src http://archive.debian.org/debian buster main\n\
-deb http://archive.debian.org/debian buster-updates main\n\
-deb-src http://archive.debian.org/debian buster-updates main\n\
-deb http://archive.debian.org/debian-security buster/updates main\n\
-deb-src http://archive.debian.org/debian-security buster/updates main\n\
-" > /etc/apt/sources.list
+# Stage 1: builder debian image
+FROM debian:${DEBIAN_VERSION} as builder
 
 # install package building helpers
 # rsyslog for logging (ref https://github.com/stilliard/docker-pure-ftpd/issues/17)
-RUN apt-get -y update && \
-	apt-get -y --force-yes --fix-missing install dpkg-dev debhelper &&\
+# Enable deb-src repos needed for apt-get source & build-dep:
+#   Trixie+ uses DEB822 format (.sources files); older distros use traditional sources.list
+ENV DEBIAN_FRONTEND noninteractive
+RUN if [ -f /etc/apt/sources.list.d/debian.sources ]; then \
+		sed -i 's/^Types: deb$/Types: deb deb-src/' /etc/apt/sources.list.d/debian.sources; \
+	else \
+		sed -i '/^deb /p;s/^deb /deb-src /' /etc/apt/sources.list; \
+	fi && \
+	apt-get -y update && \
+	apt-get -y --fix-missing install dpkg-dev debhelper &&\
 	apt-get -y build-dep pure-ftpd
-	
+
 
 # Build from source - we need to remove the need for CAP_SYS_NICE and CAP_DAC_READ_SEARCH
 RUN mkdir /tmp/pure-ftpd/ && \
@@ -29,27 +28,24 @@ RUN mkdir /tmp/pure-ftpd/ && \
 	dpkg-buildpackage -b -uc | grep -v '^checking' | grep -v ': Entering directory' | grep -v ': Leaving directory'
 
 
-#Stage 2 : actual pure-ftpd image
-FROM debian:buster-slim
+# Stage 2: actual pure-ftpd image
+FROM debian:${DEBIAN_VERSION}-slim
 
 # feel free to change this ;)
 LABEL maintainer "Andrew Stilliard <andrew.stilliard@gmail.com>"
 
-# buster is EOL, packages moved to archive
-RUN echo 'Acquire::Check-Valid-Until "false";' > /etc/apt/apt.conf.d/10archive && \
-	echo "deb http://archive.debian.org/debian buster main\ndeb http://archive.debian.org/debian-security buster/updates main\n" > /etc/apt/sources.list
-
 # install dependencies
 # FIXME : libcap2 is not a dependency anymore. .deb could be fixed to avoid asking this dependency
 ENV DEBIAN_FRONTEND noninteractive
+ARG SSL_LIB=libssl3
 RUN apt-get -y update && \
 	apt-get  --no-install-recommends --yes install \
 	libc6 \
 	libcap2 \
     libmariadb3 \
 	libpam0g \
-	libssl1.1 \
-    lsb-base \
+	${SSL_LIB} \
+	libsodium23 \
     openbsd-inetd \
     openssl \
     perl \
@@ -63,7 +59,7 @@ RUN dpkg -i /tmp/pure-ftpd/pure-ftpd-common*.deb &&\
 	# dpkg -i /tmp/pure-ftpd/pure-ftpd-ldap_*.deb && \
 	# dpkg -i /tmp/pure-ftpd/pure-ftpd-mysql_*.deb && \
 	# dpkg -i /tmp/pure-ftpd/pure-ftpd-postgresql_*.deb && \
-	rm -Rf /tmp/pure-ftpd 
+	rm -Rf /tmp/pure-ftpd
 
 # prevent pure-ftpd upgrading
 RUN apt-mark hold pure-ftpd pure-ftpd-common

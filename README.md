@@ -145,25 +145,21 @@ Want a transfer log file? add the following to your `docker run` command:
 Tags available for different versions
 --------------------------------------
 
-**Latest versions**
+- `latest` - latest version, currently Debian Trixie
+- `trixie-latest` - latest pure-ftpd on Debian Trixie (current stable)
+- `bookworm-latest` - latest pure-ftpd on Debian Bookworm
+- `bullseye-latest` - latest pure-ftpd on Debian Bullseye
+- `trixie-1.x.x` / `bookworm-1.x.x` / `bullseye-1.x.x` - pinned pure-ftpd version on a specific distro
 
-- `latest` - latest working version
-- `jessie-latest` - latest but will always remain on debian jessie
-- `hardened` - latest + [added security defaults](https://github.com/stilliard/docker-pure-ftpd/issues/10)
+**End of life / legacy tags** *(no longer updated)*
 
-**Previous version before tags were introduced**
+- `buster-1.0.47` - final Debian Buster build (Buster is EOL)
+- `stretch-latest`, `jessie-latest`, `wheezy-1.0.36` - older Debian releases, kept for reference
 
-- `wheezy-1.0.36` - incase you want to roll back to before we started using debian jessie
+*Check the [tags on Docker Hub](https://hub.docker.com/r/stilliard/pure-ftpd/tags) for all available versions*
 
-**Specific pure-ftpd versions**
-
-- `jessie-1.x.x` - jessie + specific versions, e.g. jessie-1.0.36
-- `hardened-1.x.x` - hardened + specific versions
-
-*Check the tags on github for available versions, feel free to submit issues and/or pull requests for newer versions*
-
-Usage of specific tags: 
-`sudo docker pull stilliard/pure-ftpd:hardened-1.0.36`
+Usage of specific tags:
+`docker pull stilliard/pure-ftpd:trixie-latest`
 
 **An arm64 build is also available here:** https://hub.docker.com/r/zhabba/pure-ftpd-arm64 *- Thanks @zhabba*
 
