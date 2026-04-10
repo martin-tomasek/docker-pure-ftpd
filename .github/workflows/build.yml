@@ -9,12 +9,13 @@ on:
       push:
         description: 'Push images to Docker Hub'
         type: boolean
-        default: true
+        default: false
 
 jobs:
   build:
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         include:
           - debian: trixie
