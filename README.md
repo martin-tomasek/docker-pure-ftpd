@@ -19,7 +19,7 @@ Pull down latest version with docker:
 docker pull stilliard/pure-ftpd
 ```
 
-**Often needing to run as `sudo`, e.g. `sudo docker pull stilliard/pure-ftpd`**
+**If you get a permissions error, you may need to add your user to the docker group, or run with `sudo`**
 
 ----------------------------------------
 
@@ -145,25 +145,23 @@ Want a transfer log file? add the following to your `docker run` command:
 Tags available for different versions
 --------------------------------------
 
-**Latest versions**
+Tags are named after [Debian releases](https://www.debian.org/releases/).
 
-- `latest` - latest working version
-- `jessie-latest` - latest but will always remain on debian jessie
-- `hardened` - latest + [added security defaults](https://github.com/stilliard/docker-pure-ftpd/issues/10)
+- `latest` - latest version, currently Debian Trixie
+- `trixie-latest` - latest pure-ftpd on Debian Trixie (current stable)
+- `bookworm-latest` - latest pure-ftpd on Debian Bookworm
+- `bullseye-latest` - latest pure-ftpd on Debian Bullseye
+- `trixie-1.x.x` / `bookworm-1.x.x` / `bullseye-1.x.x` - pinned pure-ftpd version on a specific distro
 
-**Previous version before tags were introduced**
+**End of life / legacy tags** *(no longer updated)*
 
-- `wheezy-1.0.36` - incase you want to roll back to before we started using debian jessie
+- `buster-1.0.47` - final Debian Buster build (Buster is EOL)
+- `stretch-latest`, `jessie-latest`, `wheezy-1.0.36` - older Debian releases, kept for reference
 
-**Specific pure-ftpd versions**
+*Check the [tags on Docker Hub](https://hub.docker.com/r/stilliard/pure-ftpd/tags) for all available versions*
 
-- `jessie-1.x.x` - jessie + specific versions, e.g. jessie-1.0.36
-- `hardened-1.x.x` - hardened + specific versions
-
-*Check the tags on github for available versions, feel free to submit issues and/or pull requests for newer versions*
-
-Usage of specific tags: 
-`sudo docker pull stilliard/pure-ftpd:hardened-1.0.36`
+Usage of specific tags:
+`docker pull stilliard/pure-ftpd:trixie-latest`
 
 **An arm64 build is also available here:** https://hub.docker.com/r/zhabba/pure-ftpd-arm64 *- Thanks @zhabba*
 
